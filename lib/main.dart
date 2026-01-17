@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:boardzone_app/pages/home.dart';
 
 void main() async {
   // 1. Initialize the binding and Firebase (from your previous steps)
@@ -20,12 +21,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,// remove the corner label
       theme: ThemeData(
         // This gives you the purple theme seen in your screenshot
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home:Home()
     );
   }
 }
