@@ -1,218 +1,218 @@
-import 'package:flutter/material.dart';
 import 'package:boardzone_app/pages/signup.dart';
-void main() {
-  runApp(const MyApp());
-}
+import 'package:boardzone_app/pages/bottomnav.dart';
+import 'package:boardzone_app/services/widget_support.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: const LoginScreen(),
-    );
-  }
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class _LoginScreenState extends State<LoginScreen> {
+  String email = "", password = "";
+
+  final TextEditingController mailcontroller = TextEditingController();
+  final TextEditingController passwordcontroller = TextEditingController();
+
+  userLogin() async {
+    try {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      
+      // Navigate to BottomNav on success
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Bottomnav()));
+      
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text(
+          "No User Found for that Email",
+          style: TextStyle(fontSize: 18.0, color: Colors.black),
+        )));
+      } else if (e.code == 'wrong-password') {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text(
+          "Wrong Password Provided by User",
+          style: TextStyle(fontSize: 18.0, color: Colors.black),
+        )));
+      } else {
+         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+          "Error: ${e.message}",
+          style: const TextStyle(fontSize: 18.0, color: Colors.black),
+        )));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Container(
-        // Applied the specific gradient from your SignUp screen
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color.fromARGB(255, 196, 211, 252), 
-              Color.fromARGB(255, 96, 168, 102), // Matching the green transition
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 30),
-                
-                // --- Top Illustration ---
-                Center(
-                  child: Container(
-                    height: 290,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.asset(
-                        'images/login.png', 
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
+        margin: const EdgeInsets.only(top: 40.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Image.asset(
+                  "images/login.png", // Make sure you have a login image or use logo.png
+                  height: 300,
+                  width: 300,
+                  fit: BoxFit.contain,
                 ),
-                
-                const SizedBox(height: 50),
-                const Text(
-                  "Login",
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A237E), // Deep blue from your SignUp code
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
+              ),
+              const SizedBox(height: 5.0),
+              Center(
+                  child: Text("Login",
+                      style: AppWidget.headlinetextstyle(20.0))),
+              const SizedBox(height: 5.0),
+              Center(
+                child: Text(
                   "Please enter the details to continue.",
-                  style: TextStyle(
-                    fontSize: 14, 
-                    color: Colors.black, // Darker text for better readability
+                  style: AppWidget.normaltextstyle(17.0),
+                ),
+              ),
+              const SizedBox(height: 40.0), 
+              
+              Padding(
+                padding: const EdgeInsets.only(left: 30.0),
+                child: Text("Email", style: AppWidget.normaltextstyle(20.0)),
+              ),
+              const SizedBox(height: 10.0),
+              Container(
+                margin: const EdgeInsets.only(left: 30.0, right: 30.0),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFececf8),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: TextField(
+                  controller: mailcontroller,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    prefixIcon: const Icon(
+                      Icons.mail,
+                      color: Color.fromARGB(255, 4, 104, 186),
+                    ),
+                    hintText: "Enter Email",
+                    hintStyle: AppWidget.normaltextstyle(18.0),
                   ),
                 ),
-                const SizedBox(height: 30),
-
-                // --- Email Field ---
-                _buildInputField(
-                  label: "Email", 
-                  hint: "Enter Email", 
-                  icon: Icons.email_outlined,
+              ),
+              
+              const SizedBox(height: 20.0),
+              
+              Padding(
+                padding: const EdgeInsets.only(left: 30.0),
+                child:
+                    Text("Password", style: AppWidget.normaltextstyle(20.0)),
+              ),
+              const SizedBox(height: 20.0),
+              Container(
+                margin: const EdgeInsets.only(left: 30.0, right: 30.0),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFececf8),
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
-                const SizedBox(height: 20),
-
-                // --- Password Field ---
-                _buildInputField(
-                  label: "Password", 
-                  hint: "Enter Password", 
-                  icon: Icons.lock_outline, 
-                  isPassword: true,
+                child: TextField(
+                  controller: passwordcontroller,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    prefixIcon: const Icon(
+                      Icons.lock,
+                      color: Color.fromARGB(255, 4, 104, 186),
+                    ),
+                    hintText: "Enter Password",
+                    hintStyle: AppWidget.normaltextstyle(18.0),
+                  ),
                 ),
-                
-                // --- Forgot Password ---
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      "Forgot Password ?",
-                      style: TextStyle(
-                        color: Color(0xFF1A237E),
-                        fontWeight: FontWeight.w600,
+              ),
+              
+              // ===== Forgot Password (Optional) =====
+              const SizedBox(height: 15.0),
+              Container(
+                margin: const EdgeInsets.only(right: 30.0),
+                alignment: Alignment.centerRight,
+                child: Text(
+                  "Forgot Password?",
+                  style: AppWidget.normaltextstyle(16.0),
+                ),
+              ),
+
+              const SizedBox(height: 40.0),
+
+              // ===== Login Button =====
+              GestureDetector(
+                onTap: () {
+                  if(mailcontroller.text != "" && passwordcontroller.text != "") {
+                    setState(() {
+                      email = mailcontroller.text;
+                      password = passwordcontroller.text;
+                    });
+                    userLogin();
+                  }
+                },
+                child: Center(
+                  child: Container(
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 104, 200, 107),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    width: MediaQuery.of(context).size.width / 2,
+                    child: Center(
+                      child: Text(
+                        "Login",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
                 ),
-
-                const SizedBox(height: 10),
-
-                // --- Login Button ---
-                SizedBox(
-                  width: double.infinity,
-                  height: 55,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 21, 87, 39), // Dark green from SignUp
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 3,
-                      shadowColor: const Color.fromARGB(255, 25, 44, 75).withOpacity(0.4),
-                    ),
+              ),
+              
+              const SizedBox(height: 20.0),
+              
+              // ===== Link to Sign Up =====
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Don't have an account? ",
+                    style: AppWidget.normaltextstyle(14.0),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignUp()),
+                      );
+                    },
                     child: const Text(
-                      "Login",
+                      "Sign Up",
                       style: TextStyle(
-                        fontSize: 18, 
-                        color: Colors.white, 
+                        color: Color.fromARGB(255, 4, 104, 186),
+                        fontSize: 14.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                ),
-
-                const SizedBox(height: 25),
-
-                // --- Sign Up Link ---
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Don't have an account? ",
-                      style: TextStyle(color: Color.fromARGB(255, 50, 68, 76)),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const SignUpScreen()),
-                         );
-                      },
-                      child: const Text(
-                        "SignUp",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold, 
-                          color: Color(0xFF1A237E),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 30),
-              ],
-            ),
+                ],
+              ),
+              const SizedBox(height: 20),
+            ],
           ),
         ),
       ),
-    );
-  }
-
-  // Unified Helper Method using the decorations from your SignUp code
-  Widget _buildInputField({
-    required String label, 
-    required String hint, 
-    required IconData icon, 
-    bool isPassword = false,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold, 
-            fontSize: 14,
-            color: Color(0xFF1A237E),
-          ),
-        ),
-        const SizedBox(height: 10),
-        TextField(
-          obscureText: isPassword,
-          decoration: InputDecoration(
-            prefixIcon: Icon(icon, color: const Color(0xFF4A69FF)),
-            hintText: hint,
-            hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
-            filled: true,
-            fillColor: Colors.white.withOpacity(0.8),
-            contentPadding: const EdgeInsets.symmetric(vertical: 16),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
