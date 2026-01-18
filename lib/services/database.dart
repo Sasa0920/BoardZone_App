@@ -7,4 +7,17 @@ class DatabaseMethods{
     .doc(id)
     .set(userInfoMap);
   }
+
+  Future addBoarding(Map<String,dynamic> boardingInfoMap,String id)async{
+  return await FirebaseFirestore.instance
+  .collection("Boarding")
+  .doc(id)
+  .set(boardingInfoMap);
+}
+Future<Stream<QuerySnapshot>> getallBoardings()async{
+  return await FirebaseFirestore.instance
+  .collection("Boarding")
+  .snapshots();
+}
+
 }

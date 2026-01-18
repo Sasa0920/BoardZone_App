@@ -1,3 +1,4 @@
+import 'package:boardzone_app/houseowner/housedetails.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
       ),
       // 3. THIS IS THE KEY CHANGE:
       // Instead of showing 'Home' or 'Login' directly, we show the Navigation Bar wrapper.
-      home: LoginScreen(), 
+      home: HouseDetail(), 
     );
   }
 }
