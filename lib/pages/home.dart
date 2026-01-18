@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boardzone_app/services/widget_support.dart';
+import 'package:boardzone_app/services/database.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -9,6 +10,20 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Stream? boardingStream;
+
+      getontheload()async{
+      boardingStream=await DatabaseMethods().getallBoardings();
+      setState(() {
+        
+      });
+    }
+    @override
+    void initState(){
+      super.initState();
+      getontheload();
+
+    }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

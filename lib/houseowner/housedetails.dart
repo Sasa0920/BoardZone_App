@@ -1,5 +1,14 @@
+import 'package:boardzone_app/houseowner/owner_home.dart';
 import 'package:boardzone_app/services/widget_support.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:random_string/random_string.dart';
+import 'package:boardzone_app/services/database.dart';
+
+
+
 
 class HouseDetail extends StatefulWidget{
   const HouseDetail({super.key});
@@ -14,10 +23,25 @@ class _HouseDetailState extends State<HouseDetail>{
        isChecked3 = false,
        isChecked4 = false;
 
+      File? selectedImage;
+      final ImagePicker _picker = ImagePicker();
+
   TextEditingController housenamecontroller = new TextEditingController();
   TextEditingController rentfeecontroller = new TextEditingController();
   TextEditingController houseaddresscontroller = new TextEditingController();
   TextEditingController additionaldetailscontroller = new TextEditingController();
+
+  Future<void> getImage() async {
+    final XFile? image = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
+
+    if (image != null) {
+      setState(() {
+        selectedImage = File(image.path);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context){
@@ -43,7 +67,19 @@ class _HouseDetailState extends State<HouseDetail>{
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 20.0),
-                  Center(
+                  selectedImage!=null?Container(
+                  height: 200,
+                  width:200,
+                  child:ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child:Image.file(selectedImage!,fit: BoxFit.cover,),
+                  ),
+                  
+                ):GestureDetector(
+                  onTap:(){
+                  getImage();
+                  },
+                  child:Center(
                     child: Container(
                       height: 200,
                       width: 200,
@@ -51,6 +87,7 @@ class _HouseDetailState extends State<HouseDetail>{
                       child: Icon(Icons.camera_alt, color: const Color.fromARGB(255, 161, 145, 1), size: 35.0,),
                     ),
                   ),
+                ),
                   SizedBox(height: 20.0),
                   Text("House Name", style: AppWidget.normaltextstyle(22.0),),
                   SizedBox(height: 5.0),
@@ -179,7 +216,79 @@ class _HouseDetailState extends State<HouseDetail>{
                       decoration: InputDecoration(border: InputBorder.none, hintText: "Enter additional details", hintStyle: AppWidget.normaltextstyle(18.0),),),
                   ),
                   SizedBox(height: 20.0),
-                  Center(
+                  GestureDetector(
+                    onTap: () async {
+                     
+                      if (housenamecontroller.text.isEmpty ||
+                          rentfeecontroller.text.isEmpty ||
+                          houseaddresscontroller.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Please fill all required fields")),
+                        );
+                        return;
+                      }
+
+                      
+                      String addId = randomAlphaNumeric(10);
+                      String downloadUrl = ""; // Default if no image selected
+
+                      
+                      if (selectedImage != null) {
+                        try {
+                          Reference firebaseStorageRef =
+                              FirebaseStorage.instance.ref().child("houseImages").child(addId);
+
+                          UploadTask task = firebaseStorageRef.putFile(selectedImage!);
+                          TaskSnapshot snapshot = await task.whenComplete(() {});
+                          downloadUrl = await snapshot.ref.getDownloadURL();
+                        } catch (e) {
+                          print("Error uploading image: $e");
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Failed to upload image, continuing without it")),
+                          );
+                        }
+                      }
+
+                      
+                      Map<String, dynamic> addBoarding = {
+                        "Image": downloadUrl, // empty string if no image
+                        "HouseName": housenamecontroller.text.trim(),
+                        "HouseAddress": houseaddresscontroller.text.trim(),
+                        "RentFee": rentfeecontroller.text.trim(),
+                        "AdditionalDetails": additionaldetailscontroller.text.trim(),
+                        "AC": isChecked,
+                        "Kitchen": isChecked2,
+                        "Bathroom": isChecked3,
+                        "Bed": isChecked4,
+                        "Id": addId,
+                      };
+
+                      
+                      try {
+                        await DatabaseMethods().addBoarding(addBoarding, addId);
+
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Boarding Added Successfully")),
+                        );
+
+                        
+                        if (mounted) {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (context) => const OwnerHome()),
+                          );
+                        }
+                      } catch (e) {
+                        print("Error adding boarding: $e");
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Failed to add boarding")),
+                        );
+                      }
+                    },
+
+
+                  
+                  child:Center(
                     child: Container(
                       height: 60,
                       decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(10)),
@@ -187,8 +296,10 @@ class _HouseDetailState extends State<HouseDetail>{
                       child: Center(child: Text("Submit", textAlign: TextAlign.center, style: AppWidget.headlinetextstyle(26.0).copyWith(color: Colors.white),)),
                     ),
                   ),
+                  ),
                   SizedBox(height: 30.0),
                 ],
+              
               ),
             ),
           ),
