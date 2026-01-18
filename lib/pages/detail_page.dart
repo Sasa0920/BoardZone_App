@@ -17,12 +17,11 @@ class _DetailPageState extends State<DetailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ===== IMAGE + BACK BUTTON =====
               Stack(
                 children: [
                   SizedBox(
                     width: double.infinity,
-                    height: 300, // fixed height (performance friendly)
+                    height: 300, 
                     child: ClipRRect(
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(50),
@@ -56,7 +55,6 @@ class _DetailPageState extends State<DetailPage> {
                 ],
               ),
 
-              // ===== DETAILS SECTION =====
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
@@ -72,12 +70,12 @@ class _DetailPageState extends State<DetailPage> {
                     const Divider(thickness: 2),
                     const SizedBox(height: 10),
                     Text(
-                      "What this place offers",
+                      "Rooms and facilities",
                       style: AppWidget.headlinetextstyle(22),
                     ),
                     const SizedBox(height: 10),
 
-                    _offerRow(Icons.wifi, "Free Wi-Fi"),
+                    _offerRow(Icons.ac_unit, "AC"),
                     _offerRow(Icons.kitchen, "Kitchen"),
                     _offerRow(Icons.bathtub, "Bathroom"),
                     _offerRow(Icons.bed, "Bedroom"),
@@ -98,7 +96,6 @@ class _DetailPageState extends State<DetailPage> {
                     ),
                     const SizedBox(height: 20),
 
-                    // ===== Booking Card =====
                     Material(
                       elevation: 2,
                       borderRadius: BorderRadius.circular(20),
@@ -164,8 +161,6 @@ class _DetailPageState extends State<DetailPage> {
                                 ),
                               ),
                             ),
-                         
-                          
                           ],
                         ),
                       ),
@@ -191,7 +186,6 @@ class _DetailPageState extends State<DetailPage> {
                             const Divider(),
                             const SizedBox(height: 10),
 
-                            // ===== Phone =====
                             Row(
                               children: [
                                 Container(
@@ -216,7 +210,6 @@ class _DetailPageState extends State<DetailPage> {
 
                             const SizedBox(height: 15),
 
-                            // ===== Location =====
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -252,7 +245,6 @@ class _DetailPageState extends State<DetailPage> {
                                       height: 55,
                                       child: ElevatedButton(
                                         onPressed: () {
-                                          // TODO: handle booking
                                           print("Book Now pressed");
                                         },
                                         style: ElevatedButton.styleFrom(
@@ -287,7 +279,6 @@ class _DetailPageState extends State<DetailPage> {
                         );
                       }
 
-  // ===== Reusable Offer Row =====
         Widget _offerRow(IconData icon, String text) {
           return Padding(
             padding: const EdgeInsets.only(top: 15),
