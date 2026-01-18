@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 
 class AppWidget{
@@ -8,6 +7,20 @@ class AppWidget{
       color: Colors.white,
       fontSize: size,
       fontWeight: FontWeight.w500, // You can change this if needed
+    );
+  }
+  static TextStyle headlinetextstyle(double size) {
+    return TextStyle(
+      color: Colors.black,
+      fontSize: size,
+      fontWeight: FontWeight.bold, // You can change this if needed
+    );
+  }
+  static TextStyle contentstyle(double size) {
+    return TextStyle(
+      color: Colors.black,
+      fontSize: size,
+      fontWeight: FontWeight.w300, // You can change this if needed
     );
   }
 }
