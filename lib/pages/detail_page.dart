@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/widget_support.dart';
+import 'package:boardzone_app/services/database.dart';
+import 'package:boardzone_app/services/shared_preference.dart';
+import 'package:boardzone_app/services/widget_support.dart';
 
 class DetailPage extends StatefulWidget {
   final String image;
@@ -30,6 +32,7 @@ class _DetailPageState extends State<DetailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // --- Header Image with Back Button ---
               Stack(
                 children: [
                   SizedBox(
@@ -75,7 +78,7 @@ class _DetailPageState extends State<DetailPage> {
                   children: [
                     const SizedBox(height: 20),
 
-                    /// 🔹 NAME
+                    /// --- Boarding Name ---
                     Text(
                       widget.name,
                       style: AppWidget.headlinetextstyle(27),
@@ -83,6 +86,7 @@ class _DetailPageState extends State<DetailPage> {
 
                     const Divider(thickness: 2),
 
+                    /// --- Facilities Section ---
                     Text("Rooms and facilities",
                         style: AppWidget.headlinetextstyle(22)),
 
@@ -93,6 +97,7 @@ class _DetailPageState extends State<DetailPage> {
 
                     const Divider(thickness: 2),
 
+                    /// --- Description ---
                     Text("About this place",
                         style: AppWidget.headlinetextstyle(22)),
 
@@ -103,7 +108,7 @@ class _DetailPageState extends State<DetailPage> {
 
                     const SizedBox(height: 20),
 
-                    /// 🔹 PRICE + BOOKING
+                    /// --- Price & Contact Info Box ---
                     Material(
                       elevation: 2,
                       borderRadius: BorderRadius.circular(20),
@@ -151,11 +156,68 @@ class _DetailPageState extends State<DetailPage> {
 
                     const SizedBox(height: 30),
 
+                    /// --- Book Now Button ---
                     SizedBox(
                       width: double.infinity,
                       height: 55,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          // 1. Get User ID & Wallet Balance
+                          String? id = await SharedpreferenceHelper().getUserId();
+                          String? wallet = await SharedpreferenceHelper().getUserWallet();
+
+                          if (id == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("Please login to book")));
+                            return;
+                          }
+
+                          // 2. Parse Price (Remove "LKR", commas, spaces)
+                          // Example: "LKR 25,000" -> "25000"
+                          int currentBalance = int.parse(wallet ?? "0");
+                          String cleanPrice = widget.price.replaceAll(RegExp(r'[^0-9]'), '');
+                          int roomPrice = int.parse(cleanPrice);
+
+                          // 3. Transaction Logic
+                          if (currentBalance >= roomPrice) {
+                            // Deduct Amount
+                            int newBalance = currentBalance - roomPrice;
+
+                            // Update Wallet in Firebase & Local Storage
+                            await DatabaseMethods().updateUserWallet(id, newBalance.toString());
+                            await SharedpreferenceHelper().saveUserWallet(newBalance.toString());
+
+                            // Create Booking Data
+                            Map<String, dynamic> bookingInfoMap = {
+                              "Service": widget.name,
+                              "Total": widget.price,
+                              "UserId": id,
+                              "Status": "Booked",
+                              "Time": DateTime.now().toString(),
+                              "Location": widget.location,
+                              // "Image": widget.image // Uncomment if you want to save image path
+                            };
+
+                            // Add to 'bookings' collection
+                            await DatabaseMethods().addBooking(bookingInfoMap);
+
+                            // Success Message
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                backgroundColor: Colors.green,
+                                content: Text("Booking Successful! Check 'My Bookings'."),
+                              ),
+                            );
+                          } else {
+                            // Insufficient Funds Message
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                backgroundColor: Colors.red,
+                                content: Text("Insufficient Balance! Please top up your wallet."),
+                              ),
+                            );
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF0766B3),
                           shape: RoundedRectangleBorder(
