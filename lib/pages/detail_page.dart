@@ -2,7 +2,20 @@ import 'package:flutter/material.dart';
 import '../services/widget_support.dart';
 
 class DetailPage extends StatefulWidget {
-  const DetailPage({super.key});
+  final String image;
+  final String name;
+  final String price;
+  final String phone;
+  final String location;
+
+  const DetailPage({
+    super.key,
+    required this.image,
+    required this.name,
+    required this.price,
+    required this.phone,
+    required this.location,
+  });
 
   @override
   State<DetailPage> createState() => _DetailPageState();
@@ -21,14 +34,14 @@ class _DetailPageState extends State<DetailPage> {
                 children: [
                   SizedBox(
                     width: double.infinity,
-                    height: 300, 
+                    height: 300,
                     child: ClipRRect(
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(50),
                         bottomRight: Radius.circular(50),
                       ),
                       child: Image.asset(
-                        "images/house1.jpg",
+                        widget.image,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -61,19 +74,17 @@ class _DetailPageState extends State<DetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
+
+                    /// 🔹 NAME
                     Text(
-                      "Sarasawi Asapuwa",
+                      widget.name,
                       style: AppWidget.headlinetextstyle(27),
                     ),
-                    const SizedBox(height: 5),
-                    
+
                     const Divider(thickness: 2),
-                    const SizedBox(height: 10),
-                    Text(
-                      "Rooms and facilities",
-                      style: AppWidget.headlinetextstyle(22),
-                    ),
-                    const SizedBox(height: 10),
+
+                    Text("Rooms and facilities",
+                        style: AppWidget.headlinetextstyle(22)),
 
                     _offerRow(Icons.ac_unit, "AC"),
                     _offerRow(Icons.kitchen, "Kitchen"),
@@ -81,27 +92,23 @@ class _DetailPageState extends State<DetailPage> {
                     _offerRow(Icons.bed, "Bedroom"),
 
                     const Divider(thickness: 2),
-                    const SizedBox(height: 5),
+
+                    Text("About this place",
+                        style: AppWidget.headlinetextstyle(22)),
+
                     Text(
-                      "About this place",
-                      style: AppWidget.headlinetextstyle(22),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      "This boarding place is ideal for faculty students, "
-                      "offering a safe, comfortable, and quiet environment "
-                      "for studying and daily living. It is located close "
-                      "to the campus with easy access to transport and shops.",
+                      "This boarding place is ideal for faculty students, offering a safe and quiet environment.",
                       style: AppWidget.contentstyle(14),
                     ),
+
                     const SizedBox(height: 20),
 
+                    /// 🔹 PRICE + BOOKING
                     Material(
                       elevation: 2,
                       borderRadius: BorderRadius.circular(20),
                       child: Container(
                         padding: const EdgeInsets.all(12),
-                        width: double.infinity,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
@@ -109,128 +116,31 @@ class _DetailPageState extends State<DetailPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "Rs.8000 for 1 month",
-                              style: AppWidget.headlinetextstyle(18),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "Booking Date",
-                              style: AppWidget.contentstyle(18),
-                            ),
+                            Text(widget.price,
+                                style: AppWidget.headlinetextstyle(18)),
                             const Divider(),
+                            Text("Contact & Location",
+                                style: AppWidget.headlinetextstyle(18)),
+
                             Row(
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: const Icon(
-                                    Icons.calendar_month,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                                const Icon(Icons.phone, color: Colors.blue),
                                 const SizedBox(width: 10),
-                                Text(
-                                  "02 Feb 2025",
-                                  style: AppWidget.contentstyle(16),
-                                ),
+                                Text(widget.phone,
+                                    style: AppWidget.contentstyle(16)),
                               ],
                             ),
-                            Divider(),
-                            const SizedBox(height: 5),
-                            Text(
-                              "Number of Students",
-                              style: AppWidget.contentstyle(18.0),
-                            ),
-                             const SizedBox(height: 10),
-                            Container(
-                              padding: const EdgeInsets.only(left: 20),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFececf8),
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: TextField(
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "1",
-                                  hintStyle: AppWidget.contentstyle(16.0),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Material(
-                      elevation: 4,
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        padding: const EdgeInsets.all(15),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Contact & Location",
-                              style: AppWidget.headlinetextstyle(18),
-                            ),
-                            const Divider(),
+
                             const SizedBox(height: 10),
 
                             Row(
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFececf8),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: const Icon(
-                                    Icons.phone,
-                                    color: Colors.blue,
-                                    size: 24,
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Text(
-                                  "077 123 4567",
-                                  style: AppWidget.contentstyle(16),
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 15),
-
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFececf8),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: const Icon(
-                                    Icons.location_on,
-                                    color: Colors.blue,
-                                    size: 24,
-                                  ),
-                                ),
+                                const Icon(Icons.location_on,
+                                    color: Colors.blue),
                                 const SizedBox(width: 10),
                                 Expanded(
-                                  child: Text(
-                                    "Near Faculty of Engineering,\nUniversity of Ruhuna, Galle",
-                                    style: AppWidget.contentstyle(16),
-                                  ),
+                                  child: Text(widget.location,
+                                      style: AppWidget.contentstyle(16)),
                                 ),
                               ],
                             ),
@@ -238,57 +148,49 @@ class _DetailPageState extends State<DetailPage> {
                         ),
                       ),
                     ),
-                              const SizedBox(height: 30),
 
-                                    SizedBox(
-                                      width: double.infinity,
-                                      height: 55,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          print("Book Now pressed");
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(0xFF0766B3),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(15),
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          "Book Now",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                    const SizedBox(height: 30),
 
-                                    const SizedBox(height: 30),
-
-
-                                        const SizedBox(height: 30),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 55,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0766B3),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
                           ),
-                          
-                        );
-                      }
+                        ),
+                        child: const Text(
+                          "Book Now",
+                          style: TextStyle(
+                              fontSize: 18, color: Colors.white),
+                        ),
+                      ),
+                    ),
 
-        Widget _offerRow(IconData icon, String text) {
-          return Padding(
-            padding: const EdgeInsets.only(top: 15),
-            child: Row(
-              children: [
-                Icon(icon, color: const Color(0xFF0766B3), size: 28),
-                const SizedBox(width: 10),
-                Text(text, style: AppWidget.contentstyle(20)),
-              ],
-            ),
-          );
-        }
+                    const SizedBox(height: 30),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _offerRow(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 15),
+      child: Row(
+        children: [
+          Icon(icon, color: const Color(0xFF0766B3), size: 28),
+          const SizedBox(width: 10),
+          Text(text, style: AppWidget.contentstyle(20)),
+        ],
+      ),
+    );
+  }
 }
